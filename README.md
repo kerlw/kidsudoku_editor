@@ -20,7 +20,7 @@
 * UUID
 
 	|   name | type | length | comment |
-| --------- | -------:| ---------:| --------------:|
+| --------- | -------:| ---------:|:-------------- |
 |id4|uint_32|4
 |id3|uint_32|4
 |id2|uint_32|4
@@ -29,14 +29,14 @@
 * string
 
 	|   name | type | length | comment |
-| --------- | -------:| ---------:| --------------:|
+| --------- | -------:| ---------:|:-------------- |
 |str_len|uint_32|4|
 |content|array||char array, length indicated by *str_len*
 
 * StageData
 
 	|   name | type | length | comment |
-| --------- | -------:| ---------:| --------------:|
+| --------- | -------:| ---------:|:-------------- |
 |id|uint_32|4|indicate this stage, would be used in game's progress data.
 |res|string||if this stage use another resouce differet to *default_res* of CampaignData, fill this field.
 |rows_per_grid|uint_8|1
@@ -51,7 +51,7 @@
 * CampaignData
 
 	|   name | type | length | comment |
-| --------- | -------:| ---------:| --------------:|
+| --------- | -------:| ---------:|:-------------- |
 |major_version|uint_16|2|
 |minor_version|uint_16|2
 |id|UUID|16|
