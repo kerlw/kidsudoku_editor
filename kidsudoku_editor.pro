@@ -13,8 +13,24 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    widgets/ColorCombo.cpp \
+    widgets/EnumProperty.cpp \
+    widgets/Property.cpp \
+    widgets/QPropertyEditorWidget.cpp \
+    widgets/QPropertyModel.cpp \
+    widgets/QVariantDelegate.cpp \
+    QStageData.cpp \
+    QCampaignData.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    widgets/ColorCombo.h \
+    widgets/EnumProperty.h \
+    widgets/Property.h \
+    widgets/QPropertyEditorWidget.h \
+    widgets/QPropertyModel.h \
+    widgets/QVariantDelegate.h \
+    QStageData.h \
+    QCampaignData.h
 
 FORMS    += mainwindow.ui
