@@ -1,8 +1,10 @@
 #ifndef QSTAGEDATA_H
 #define QSTAGEDATA_H
 
+#include "portable.h"
 #include <QObject>
 #include <QSize>
+#include <set>
 
 class QStageData : public QObject
 {
@@ -46,6 +48,8 @@ public:
     void resetGridSize(const QSize& size);
     void resetBoxSize(const QSize& size);
 
+    void toBytes(byte** buff, int& len);
+    void parseFromBytes(byte* buff, int len);
 private:
     bool m_isSpecialRes;
     QString m_strPListFile;
@@ -55,6 +59,7 @@ private:
     int m_iCellCount;
 
     int* m_pNumbers;
+    std::set<int> m_setKnownCells;
 };
 
 #endif // QSTAGEDATA_H

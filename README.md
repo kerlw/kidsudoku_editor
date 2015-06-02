@@ -44,7 +44,7 @@
 |grids_in_row|uint8|1
 |grids_in_col|uint8|1
 |known_cells_count|uint16|2|count of cells that has initialized with a number in this puzzle.
-|know_cells|array|dynamic|uint_16 array, each value is made up by two parts: high 8-bit indicates position of this cell and low 8-bit indicate its number value.
+|know_cells|array|dynamic|uint_16 array, each value is made up by two parts: low 8-bit indicates position of this cell and high 8-bit indicate its number value.
 
 
 

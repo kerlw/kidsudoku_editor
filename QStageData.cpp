@@ -1,4 +1,5 @@
 #include "QStageData.h"
+#include <QDataStream>
 
 static const int MAX_SIZE = 9 * 9;
 
@@ -71,5 +72,53 @@ void QStageData::resetBoxSize(const QSize& size) {
     //TODO move numbers to the new place
     m_sizeBox = size;
     m_iCellCount = m_sizeGrid.width() * m_sizeGrid.height() * m_sizeBox.width() * m_sizeBox.height();
+}
+
+void QStageData::toBytes(byte **buff, int &len) {
+    QDataStream stream;
+    stream << 1;    //TODO id
+    stream << 0;    //TODO specialfy resource
+    stream << quint8(m_sizeGrid.height());
+    stream << quint8(m_sizeGrid.width());
+    stream << quint8(m_sizeBox.height());
+    stream << quint8(m_sizeBox.width());
+
+    stream << static_cast<quint16>(m_setKnownCells.size());
+    std::set<int>::iterator it = m_setKnownCells.begin();
+    while (it != m_setKnownCells.end()) {
+        stream << quint8(*it);
+        stream << quint8(m_pNumbers[*it]);
+        ++it;
+    }
+}
+
+void QStageData::parseFromBytes(byte *buff, int len) {
+    QDataStream stream(QByteArray(buff, len));
+    quint32 i32;
+    quint16 i16;
+    quint8 i8;
+
+    stream >> id;
+    stream >> id;
+    if (id > 0)
+        stream.readRawData(NULL, id);
+
+    stream >> i8;
+    m_sizeGrid.setHeight(i8);
+    stream >> i8;
+    m_sizeGrid.setWidth(i8);
+    stream >> i8;
+    m_sizeBox.setHeight(i8);
+    stream >> i8;
+    m_sizeBox.setWidth(i8);
+
+    stream >> i16;
+    int count = i16;
+
+    memset(m_pNumbers, 0, sizeof(int)*MAX_SIZE);
+    for (int i = 0; i < count; i++) {
+        stream >> i8;
+        stream >> reinterpret_cast<quint8&>(m_pNumbers[i8]);
+    }
 }
 

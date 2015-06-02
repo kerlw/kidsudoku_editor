@@ -31,6 +31,7 @@ HEADERS  += mainwindow.h \
     widgets/QPropertyModel.h \
     widgets/QVariantDelegate.h \
     QStageData.h \
-    QCampaignData.h
+    QCampaignData.h \
+    portable.h
 
 FORMS    += mainwindow.ui
