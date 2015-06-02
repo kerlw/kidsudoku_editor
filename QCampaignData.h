@@ -17,6 +17,8 @@ public:
 
     void addStageData(QStageData* pData, int index = -1);
     void removeStageDataAt(int index);
+
+    QStageData* getStageAt(int index);
 signals:
 
 public slots:

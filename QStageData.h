@@ -34,11 +34,27 @@ public:
     QSize boxSize() { return m_sizeBox; }
     void setBoxSize(QSize& size) { m_sizeBox = size;    }
 
+    QString toQString();
+
+    int numberAt(int index);
+
+    void resetRowsPerGrid(int value);
+    void resetColsPerGrid(int value);
+    void resetGridsInRow(int value);
+    void resetGridsInCol(int value);
+
+    void resetGridSize(const QSize& size);
+    void resetBoxSize(const QSize& size);
+
 private:
     bool m_isSpecialRes;
-    QString m_strPListFile;\
+    QString m_strPListFile;
     QSize m_sizeGrid;
     QSize m_sizeBox;
+
+    int m_iCellCount;
+
+    int* m_pNumbers;
 };
 
 #endif // QSTAGEDATA_H

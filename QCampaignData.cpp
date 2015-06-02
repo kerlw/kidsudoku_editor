@@ -37,3 +37,10 @@ void QCampaignData::removeStageDataAt(int index) {
     delete *it;
     m_vctData.erase(it);
 }
+
+QStageData* QCampaignData::getStageAt(int index) {
+    if (index < 0 || index >= m_vctData.size())
+        return NULL;
+
+    return m_vctData[index];
+}
