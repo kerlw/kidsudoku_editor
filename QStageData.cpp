@@ -77,7 +77,7 @@ void QStageData::resetBoxSize(const QSize& size) {
 void QStageData::toBytes(byte **buff, int &len) {
     QDataStream stream;
     stream << 1;    //TODO id
-    stream << 0;    //TODO specialfy resource
+    stream << 0;    //TODO specified resource
     stream << quint8(m_sizeGrid.height());
     stream << quint8(m_sizeGrid.width());
     stream << quint8(m_sizeBox.height());
@@ -90,18 +90,20 @@ void QStageData::toBytes(byte **buff, int &len) {
         stream << quint8(m_pNumbers[*it]);
         ++it;
     }
+
+    //TODO calculate length and read bytes to buffer.
 }
 
 void QStageData::parseFromBytes(byte *buff, int len) {
-    QDataStream stream(QByteArray(buff, len));
+    QDataStream stream(QByteArray((char *)buff, len));
     quint32 i32;
     quint16 i16;
     quint8 i8;
 
-    stream >> id;
-    stream >> id;
-    if (id > 0)
-        stream.readRawData(NULL, id);
+    stream >> i32;
+    stream >> i32;
+    if (i32 > 0)
+        stream.skipRawData(i32); //TODO read specified resource
 
     stream >> i8;
     m_sizeGrid.setHeight(i8);
