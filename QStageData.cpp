@@ -29,6 +29,18 @@ QStageData* QStageData::create(QSize gridSize, QSize boxSize) {
     return ret;
 }
 
+QStageData* QStageData::create(QStageData *src) {
+    QStageData* ret = new QStageData();
+    Q_ASSERT(src);
+    ret->m_sizeGrid = src->m_sizeGrid;
+    ret->m_sizeBox = src->m_sizeBox;
+    ret->m_iCellCount = src->m_iCellCount;
+    Q_ASSERT(ret->m_iCellCount <= MAX_SIZE);
+    memcpy(ret->m_pNumbers, src->m_pNumbers, sizeof(int)*ret->m_iCellCount);
+
+    return ret;
+}
+
 QString QStageData::toQString() {
     QString str;
     str.sprintf("Stage grid size: %dx%d box size: %dx%d",  m_sizeGrid.width(), m_sizeGrid.height(), m_sizeBox.width(), m_sizeBox.height());
@@ -76,22 +88,31 @@ void QStageData::resetBoxSize(const QSize& size) {
 
 void QStageData::toBytes(byte **buff, int &len) {
     QDataStream stream;
+    len = 0;
+
     stream << 1;    //TODO id
+    len += 4;
     stream << 0;    //TODO specified resource
+    len += 4;
     stream << quint8(m_sizeGrid.height());
     stream << quint8(m_sizeGrid.width());
     stream << quint8(m_sizeBox.height());
     stream << quint8(m_sizeBox.width());
+    len += 4;
 
     stream << static_cast<quint16>(m_setKnownCells.size());
+    len += 2;
+
     std::set<int>::iterator it = m_setKnownCells.begin();
     while (it != m_setKnownCells.end()) {
         stream << quint8(*it);
         stream << quint8(m_pNumbers[*it]);
+        len += 2;
         ++it;
     }
 
-    //TODO calculate length and read bytes to buffer.
+    *buff = new byte[len];
+    stream.readRawData((char*)(*buff), len);
 }
 
 void QStageData::parseFromBytes(byte *buff, int len) {

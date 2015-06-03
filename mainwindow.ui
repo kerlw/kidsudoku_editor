@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>911</width>
-    <height>638</height>
+    <width>914</width>
+    <height>736</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -156,33 +156,20 @@
       <item>
        <layout class="QVBoxLayout" name="propertyFrame">
         <property name="spacing">
-         <number>0</number>
+         <number>6</number>
         </property>
         <property name="leftMargin">
-         <number>0</number>
+         <number>5</number>
         </property>
         <property name="topMargin">
-         <number>0</number>
+         <number>5</number>
         </property>
         <property name="rightMargin">
-         <number>0</number>
+         <number>5</number>
         </property>
         <property name="bottomMargin">
-         <number>0</number>
+         <number>5</number>
         </property>
-        <item>
-         <spacer name="verticalSpacer_4">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
         <item>
          <widget class="QGroupBox" name="m_grpCampaign">
           <property name="enabled">
@@ -219,9 +206,6 @@
               <bool>false</bool>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_2">
-              <property name="spacing">
-               <number>6</number>
-              </property>
               <property name="leftMargin">
                <number>0</number>
               </property>
@@ -241,6 +225,12 @@
                   <property name="enabled">
                    <bool>false</bool>
                   </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                  </widget>
                 </item>
                 <item>
@@ -259,6 +249,12 @@
                   <property name="enabled">
                    <bool>false</bool>
                   </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                  </widget>
                 </item>
                 <item>
@@ -275,19 +271,6 @@
            </item>
           </layout>
          </widget>
-        </item>
-        <item>
-         <spacer name="verticalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
         </item>
         <item>
          <widget class="QGroupBox" name="m_grpStage">
@@ -344,6 +327,12 @@
                   <property name="enabled">
                    <bool>false</bool>
                   </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                  </widget>
                 </item>
                 <item>
@@ -361,6 +350,12 @@
                  <widget class="QLineEdit" name="lineEdit_2">
                   <property name="enabled">
                    <bool>false</bool>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
                   </property>
                  </widget>
                 </item>
@@ -464,17 +459,20 @@
          </widget>
         </item>
         <item>
-         <spacer name="verticalSpacer_5">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
+         <widget class="QListView" name="m_lvResources">
+          <property name="enabled">
+           <bool>true</bool>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-         </spacer>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -487,7 +485,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>911</width>
+     <width>914</width>
      <height>28</height>
     </rect>
    </property>
@@ -505,11 +503,24 @@
    </widget>
    <widget class="QMenu" name="menu_Build">
     <property name="title">
-     <string>&amp;Build</string>
+     <string>&amp;Edit</string>
     </property>
+    <addaction name="action_Add_a_stage"/>
+    <addaction name="actionMove_up_stage"/>
+    <addaction name="actionMove_dow_n_stage"/>
+    <addaction name="actionDel_stage"/>
+    <addaction name="actionDuplicate_selected_stage"/>
+   </widget>
+   <widget class="QMenu" name="menu_Resource">
+    <property name="title">
+     <string>&amp;Resource</string>
+    </property>
+    <addaction name="actionAdd_resource"/>
+    <addaction name="actionDel_resource"/>
    </widget>
    <addaction name="menu_Files"/>
    <addaction name="menu_Build"/>
+   <addaction name="menu_Resource"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="movable">
@@ -521,15 +532,32 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="action_New"/>
+   <addaction name="action_Open"/>
+   <addaction name="action_Save"/>
+   <addaction name="separator"/>
+   <addaction name="action_Add_a_stage"/>
+   <addaction name="actionDuplicate_selected_stage"/>
+   <addaction name="actionDel_stage"/>
+   <addaction name="actionMove_up_stage"/>
+   <addaction name="actionMove_dow_n_stage"/>
    <addaction name="separator"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="action_Open">
+   <property name="icon">
+    <iconset>
+     <normaloff>../qt_project/application/images/open.png</normaloff>../qt_project/application/images/open.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Open</string>
    </property>
   </action>
   <action name="action_Save">
+   <property name="icon">
+    <iconset>
+     <normaloff>../qt_project/application/images/save.png</normaloff>../qt_project/application/images/save.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Save</string>
    </property>
@@ -545,12 +573,72 @@
    </property>
   </action>
   <action name="action_New">
+   <property name="icon">
+    <iconset>
+     <normaloff>../qt_project/application/images/new.png</normaloff>../qt_project/application/images/new.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;New</string>
+   </property>
+  </action>
+  <action name="action_Add_a_stage">
+   <property name="text">
+    <string>&amp;Add a stage</string>
+   </property>
+  </action>
+  <action name="actionMove_up_stage">
+   <property name="text">
+    <string>Move &amp;up stage</string>
+   </property>
+  </action>
+  <action name="actionMove_dow_n_stage">
+   <property name="text">
+    <string>Move dow&amp;n stage</string>
+   </property>
+  </action>
+  <action name="actionDel_stage">
+   <property name="text">
+    <string>Del stage</string>
+   </property>
+  </action>
+  <action name="actionAdd_resource">
+   <property name="text">
+    <string>Add resource</string>
+   </property>
+  </action>
+  <action name="actionDel_resource">
+   <property name="text">
+    <string>Del resource</string>
+   </property>
+  </action>
+  <action name="actionDuplicate_selected_stage">
+   <property name="icon">
+    <iconset>
+     <normaloff>../qt_project/application/images/copy.png</normaloff>../qt_project/application/images/copy.png</iconset>
+   </property>
+   <property name="text">
+    <string>Duplicate selected stage</string>
    </property>
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>action_Quit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>455</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

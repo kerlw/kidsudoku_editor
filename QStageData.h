@@ -23,6 +23,7 @@ public:
     ~QStageData();
 
     static QStageData* create(QSize gridSize, QSize boxSize);
+    static QStageData* create(QStageData* src);
 
     bool isSpecialRes() {        return m_isSpecialRes;    }
     void setIsSpecialRes(bool value) { m_isSpecialRes = value; }
