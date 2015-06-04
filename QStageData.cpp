@@ -86,37 +86,34 @@ void QStageData::resetBoxSize(const QSize& size) {
     m_iCellCount = m_sizeGrid.width() * m_sizeGrid.height() * m_sizeBox.width() * m_sizeBox.height();
 }
 
-void QStageData::toBytes(byte **buff, int &len) {
-    QDataStream stream;
-    len = 0;
-
-    stream << 1;    //TODO id
-    len += 4;
-    stream << 0;    //TODO specified resource
-    len += 4;
-    stream << quint8(m_sizeGrid.height());
-    stream << quint8(m_sizeGrid.width());
-    stream << quint8(m_sizeBox.height());
-    stream << quint8(m_sizeBox.width());
-    len += 4;
-
-    stream << static_cast<quint16>(m_setKnownCells.size());
-    len += 2;
-
-    std::set<int>::iterator it = m_setKnownCells.begin();
-    while (it != m_setKnownCells.end()) {
-        stream << quint8(*it);
-        stream << quint8(m_pNumbers[*it]);
-        len += 2;
-        ++it;
-    }
-
-    *buff = new byte[len];
-    stream.readRawData((char*)(*buff), len);
+int QStageData::lengthInByte() const {
+    int ret = 4;    //id
+    ret += 4;       //TODO speicified resources
+    ret += 4;       //grid size & box size
+    ret += 2;       //count of known cells
+    ret += 2 * m_setKnownCells.size();  //known cells position&number array
 }
 
-void QStageData::parseFromBytes(byte *buff, int len) {
-    QDataStream stream(QByteArray((char *)buff, len));
+QDataStream& operator<<(QDataStream& stream, const QStageData& data) {
+    stream << quint32(data.lengthInByte());
+    stream << 1;    //TODO id
+    stream << 0;    //TODO specified resource
+    stream << quint8(data.m_sizeGrid.height());
+    stream << quint8(data.m_sizeGrid.width());
+    stream << quint8(data.m_sizeBox.height());
+    stream << quint8(data.m_sizeBox.width());
+
+    stream << quint16(data.m_setKnownCells.size());
+
+    std::set<int>::const_iterator it = data.m_setKnownCells.begin();
+    while (it != data.m_setKnownCells.end()) {
+        stream << quint8(*it) << quint8(data.m_pNumbers[*it]);
+        ++it;
+    }
+    return stream;
+}
+
+QDataStream& operator>>(QDataStream& stream, QStageData& data) {
     quint32 i32;
     quint16 i16;
     quint8 i8;
@@ -127,21 +124,23 @@ void QStageData::parseFromBytes(byte *buff, int len) {
         stream.skipRawData(i32); //TODO read specified resource
 
     stream >> i8;
-    m_sizeGrid.setHeight(i8);
+    data.m_sizeGrid.setHeight(i8);
     stream >> i8;
-    m_sizeGrid.setWidth(i8);
+    data.m_sizeGrid.setWidth(i8);
     stream >> i8;
-    m_sizeBox.setHeight(i8);
+    data.m_sizeBox.setHeight(i8);
     stream >> i8;
-    m_sizeBox.setWidth(i8);
+    data.m_sizeBox.setWidth(i8);
 
     stream >> i16;
     int count = i16;
 
-    memset(m_pNumbers, 0, sizeof(int)*MAX_SIZE);
+    memset(data.m_pNumbers, 0, sizeof(int)*MAX_SIZE);
     for (int i = 0; i < count; i++) {
         stream >> i8;
-        stream >> reinterpret_cast<quint8&>(m_pNumbers[i8]);
+        stream >> reinterpret_cast<quint8&>(data.m_pNumbers[i8]);
     }
+
+    return stream;
 }
 

@@ -4,7 +4,7 @@
 #include <QObject>
 #include <vector>
 #include <QStringList>
-
+#include <QDataStream>
 #include "portable.h"
 
 class QStageData;
@@ -24,13 +24,12 @@ public:
 
     QStageData* getStageAt(int index);
 
-    void toBytes(byte** buff, int& len);
-    void parseFromBytes(const byte* buff, int len);
-
     QStringList getStagesStringList();
 
     QString& getSavePath() { return m_strPath; }
     void setSavePath(const QString& path) { m_strPath = path; }
+
+    int lengthInByte() const;
 signals:
 
 public slots:
@@ -38,6 +37,11 @@ public slots:
 private:
     std::vector<QStageData*> m_vctData;
     QString m_strPath;
+
+    friend QDataStream& operator<<(QDataStream& stream, const QCampaignData& data);
 };
+
+QDataStream& operator<<(QDataStream& stream, const QCampaignData& data);
+QDataStream& operator>>(QDataStream& stream, QCampaignData& data);
 
 #endif // QCAMPAIGNDATA_H

@@ -49,8 +49,9 @@ public:
     void resetGridSize(const QSize& size);
     void resetBoxSize(const QSize& size);
 
-    void toBytes(byte** buff, int& len);
-    void parseFromBytes(byte* buff, int len);
+    int lengthInByte() const;
+//    void toBytes(byte** buff, int& len);
+//    void parseFromBytes(byte* buff, int len);
 private:
     bool m_isSpecialRes;
     QString m_strPListFile;
@@ -61,6 +62,12 @@ private:
 
     int* m_pNumbers;
     std::set<int> m_setKnownCells;
+
+    friend QDataStream& operator<<(QDataStream& stream, const QStageData& data);
+    friend QDataStream& operator>>(QDataStream& stream, QStageData& data);
 };
+
+QDataStream& operator<<(QDataStream& stream, const QStageData& data);
+QDataStream& operator>>(QDataStream& stream, QStageData& data);
 
 #endif // QSTAGEDATA_H

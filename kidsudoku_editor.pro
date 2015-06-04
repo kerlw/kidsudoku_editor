@@ -23,3 +23,6 @@ HEADERS  += mainwindow.h \
     portable.h
 
 FORMS    += mainwindow.ui
+
+RESOURCES += \
+    resources.qrc

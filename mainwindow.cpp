@@ -9,8 +9,8 @@
 #include <QFileDialog>
 #include <QMessageBox>
 
-static const QString FILE_FILTER = "KidSudoku Packed Campaign Files(*.spc)";
-static const QString EXTENSION_NAME = ".spc";      //file extension name, spc = Sudoku Packed Campaign
+static const QString FILE_FILTER = "KidSudoku Packed Campaign Files(*.pcd)";
+static const QString EXTENSION_NAME = ".pcd";      //file extension name, pcd = Packed Campaign Data
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -98,6 +98,7 @@ void MainWindow::on_m_lvStages_clicked(const QModelIndex &index)
 }
 
 void MainWindow::refreshView() {
+    onCampaignDataLoaded();
     refreshSudokuBox();
 }
 
@@ -202,19 +203,17 @@ void MainWindow::on_action_Open_triggered()
         QMessageBox::information(this, "Failed", "Open file failed!");
         return;
     }
+    QDataStream stream(&file);
 
-    QByteArray ba = file.read(4);
-    quint32 len = 0;
-    QDataStream(ba) >> len;
-    byte* buffer = new byte[len];
-    file.read((char* )buffer, len);
-
-    if (m_pCampaign == NULL)
+    //read campaign data from file.
+    if (!m_pCampaign)
         m_pCampaign = new QCampaignData();
-    m_pCampaign->parseFromBytes(buffer, len);
-    m_pCurrentEditStage = NULL;
-
+    stream >> *m_pCampaign;
     file.close();
+
+    m_pCampaign->setSavePath(path);
+    m_bChanged = false;
+    m_pCurrentEditStage = NULL;
     refreshView();
 }
 
@@ -230,7 +229,14 @@ void MainWindow::on_actionSave_as_triggered()
 
 void MainWindow::on_action_Add_a_stage_triggered()
 {
+    if (!m_pCampaign)
+        return;
 
+    QStageData* data = QStageData::create(QSize(1,1), QSize(1,1));
+    m_pCampaign->addStageData(data);
+
+    QStandardItem* item = new QStandardItem(data->toQString());
+    ((QStandardItemModel*)ui->m_lvStages->model())->appendRow(item);
 }
 
 void MainWindow::on_actionMove_up_stage_triggered()
@@ -250,7 +256,8 @@ void MainWindow::on_actionDel_stage_triggered()
 
 void MainWindow::on_actionAdd_resource_triggered()
 {
-
+    if (!m_pCampaign)
+        return;
 }
 
 void MainWindow::on_actionDel_resource_triggered()
@@ -260,7 +267,7 @@ void MainWindow::on_actionDel_resource_triggered()
 
 void MainWindow::on_actionDuplicate_selected_stage_triggered()
 {
-    if (m_pCurrentEditStage == NULL)
+    if (!m_pCurrentEditStage)
         return;
 
     QStageData* data = QStageData::create(m_pCurrentEditStage);
@@ -271,11 +278,10 @@ void MainWindow::on_actionDuplicate_selected_stage_triggered()
 }
 
 MainWindow::ExecuteResult MainWindow::confirmSaveChanges() {
-    if (m_pCampaign == NULL)
+    if (!m_pCampaign)
         return MainWindow::Error;
 
     MainWindow::ExecuteResult result = MainWindow::DONE;
-
     if (m_bChanged) {
         int ret = QMessageBox::information(this, tr("Confirm"), tr("Change has not been saved, save it?"),
                                            tr("Save it now!"),
@@ -309,7 +315,7 @@ MainWindow::ExecuteResult MainWindow::doSave() {
 
 MainWindow::ExecuteResult MainWindow::doSaveAs() {
 label_start:
-    QString path = QFileDialog::getSaveFileName(this, tr("Save"), ".", FILE_FILTER);
+    QString path = QFileDialog::getSaveFileName(this, tr("Save"), ".", FILE_FILTER, 0, QFileDialog::DontConfirmOverwrite);
     if (path.length() == 0)
         return MainWindow::Canceled;
 
@@ -336,20 +342,26 @@ MainWindow::ExecuteResult MainWindow::saveToFile(const QString &path) {
     if (!m_pCampaign)
         return MainWindow::Error;
 
-    byte* buff = NULL;
-    int len = 0;
-    m_pCampaign->toBytes(&buff, len);
-
     QFile file(path);
     if (!file.open(QFile::ReadWrite|QFile::Truncate)) {
         return MainWindow::Error;
     }
 
-    file.write((const char*)buff, len);
+    QDataStream stream(&file);
+    stream << *m_pCampaign;
     file.flush();
     file.close();
+
     //reset the campaign's save path to the new path
     m_pCampaign->setSavePath(path);
     m_bChanged = false;     //TODO change the window's title ???
     return MainWindow::DONE;
+}
+
+void MainWindow::on_m_btnGenerate_clicked()
+{
+    if (!m_pCurrentEditStage)
+        return;
+
+
 }
