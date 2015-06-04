@@ -70,6 +70,7 @@ private slots:
     void on_actionAdd_resource_triggered();
     void on_actionDel_resource_triggered();
     void on_actionDuplicate_selected_stage_triggered();
+    void on_m_btnGenerate_clicked();
 };
 
 #endif // MAINWINDOW_H
