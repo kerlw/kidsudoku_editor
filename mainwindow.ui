@@ -590,7 +590,7 @@
   <action name="action_Open">
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/imags/Open.png</normaloff>:/imags/Open.png</iconset>
+     <normaloff>:/icons/images/Open.png</normaloff>:/icons/images/Open.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Open</string>
@@ -599,7 +599,7 @@
   <action name="action_Save">
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/imags/Save.png</normaloff>:/imags/Save.png</iconset>
+     <normaloff>:/icons/images/Save.png</normaloff>:/icons/images/Save.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Save</string>
@@ -608,7 +608,7 @@
   <action name="actionSave_as">
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/imags/Save as.png</normaloff>:/imags/Save as.png</iconset>
+     <normaloff>:/icons/images/Save as.png</normaloff>:/icons/images/Save as.png</iconset>
    </property>
    <property name="text">
     <string>Save &amp;as...</string>
@@ -622,7 +622,7 @@
   <action name="action_New">
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/imags/New.png</normaloff>:/imags/New.png</iconset>
+     <normaloff>:/icons/images/New.png</normaloff>:/icons/images/New.png</iconset>
    </property>
    <property name="text">
     <string>&amp;New</string>
@@ -631,7 +631,7 @@
   <action name="action_Add_a_stage">
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/imags/Add.png</normaloff>:/imags/Add.png</iconset>
+     <normaloff>:/icons/images/Add.png</normaloff>:/icons/images/Add.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Add a stage</string>
@@ -640,7 +640,7 @@
   <action name="actionMove_up_stage">
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/imags/Up.png</normaloff>:/imags/Up.png</iconset>
+     <normaloff>:/icons/images/Up.png</normaloff>:/icons/images/Up.png</iconset>
    </property>
    <property name="text">
     <string>Move &amp;up stage</string>
@@ -649,7 +649,7 @@
   <action name="actionMove_dow_n_stage">
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/imags/Down.png</normaloff>:/imags/Down.png</iconset>
+     <normaloff>:/icons/images/Down.png</normaloff>:/icons/images/Down.png</iconset>
    </property>
    <property name="text">
     <string>Move dow&amp;n stage</string>
@@ -658,7 +658,7 @@
   <action name="actionDel_stage">
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/imags/Delete.png</normaloff>:/imags/Delete.png</iconset>
+     <normaloff>:/icons/images/Delete.png</normaloff>:/icons/images/Delete.png</iconset>
    </property>
    <property name="text">
     <string>Del stage</string>
@@ -677,7 +677,7 @@
   <action name="actionDuplicate_selected_stage">
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/imags/Duplicate.png</normaloff>:/imags/Duplicate.png</iconset>
+     <normaloff>:/icons/images/Duplicate.png</normaloff>:/icons/images/Duplicate.png</iconset>
    </property>
    <property name="text">
     <string>Duplicate selected stage</string>
