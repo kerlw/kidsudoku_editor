@@ -16,13 +16,15 @@ SOURCES += main.cpp\
 	mainwindow.cpp \
     QStageData.cpp \
     QCampaignData.cpp \
-    SudokuUtil.cpp
+    SudokuUtil.cpp \
+    QSudokuBoxModel.cpp
 
 HEADERS  += mainwindow.h \
     QStageData.h \
     QCampaignData.h \
     portable.h \
-    SudokuUtil.h
+    SudokuUtil.h \
+    QSudokuBoxModel.h
 
 FORMS    += mainwindow.ui
 

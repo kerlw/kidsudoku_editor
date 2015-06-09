@@ -1,13 +1,16 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "QStageData.h"
-#include "QCampaignData.h"
 
 #include <iostream>
 #include <QStandardItem>
 #include <QStandardItemModel>
 #include <QFileDialog>
 #include <QMessageBox>
+
+#include "QStageData.h"
+#include "QCampaignData.h"
+#include "QSudokuBoxModel.h"
+#include "SudokuUtil.h"
 
 static const QString FILE_FILTER = "KidSudoku Packed Campaign Files(*.pcd)";
 static const QString EXTENSION_NAME = ".pcd";      //file extension name, pcd = Packed Campaign Data
@@ -26,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_modelStages = new QStandardItemModel(this);
     ui->m_lvStages->setModel(m_modelStages);
 
-    m_modelSudoku = new QStandardItemModel(this);
+    m_modelSudoku = new QSudokuBoxModel(this);
     ui->m_tbSudokuBox->setModel(m_modelSudoku);
 
     m_modelRes = new QStandardItemModel(this);
@@ -62,6 +65,8 @@ void MainWindow::on_action_New_triggered()
 }
 
 void MainWindow::onCampaignDataLoaded() {
+    m_modelStages->clear();
+
     //check whether the campaign data is valid or not.
     if (!m_pCampaign || !m_pCampaign->getStageDataCount())
         return;
@@ -83,17 +88,25 @@ void MainWindow::onCampaignDataLoaded() {
 void MainWindow::on_m_lvStages_clicked(const QModelIndex &index)
 {
     int pos = index.row();
-    m_pCurrentEditStage = m_pCampaign->getStageAt(pos);
-    if (m_pCurrentEditStage) {
+    /**
+      * set current edit stagedata to NULL to avoid setting spin editor
+      * value changed trigger resize
+     **/
+    m_pCurrentEditStage = 0;
+    QStageData* data = m_pCampaign->getStageAt(pos);
+    if (data) {
         if (!ui->m_grpStage->isEnabled())
             ui->m_grpStage->setEnabled(true);
-        ui->m_spbColsPerGrid->setValue(m_pCurrentEditStage->gridSize().width());
-        ui->m_spbRowsPerGrid->setValue(m_pCurrentEditStage->gridSize().height());
-        ui->m_spbGridsInCol->setValue(m_pCurrentEditStage->boxSize().width());
-        ui->m_spbGridsInRow->setValue(m_pCurrentEditStage->boxSize().height());
+        ui->m_spbColsPerGrid->setValue(data->gridSize().width());
+        ui->m_spbRowsPerGrid->setValue(data->gridSize().height());
+        ui->m_spbGridsInCol->setValue(data->boxSize().width());
+        ui->m_spbGridsInRow->setValue(data->boxSize().height());
     } else {
         ui->m_grpStage->setEnabled(false);
     }
+
+
+    m_pCurrentEditStage = data;
     refreshSudokuBox();
 }
 
@@ -117,31 +130,30 @@ void MainWindow::refreshSudokuBox() {
         int rows = m_pCurrentEditStage->boxSize().height() * m_pCurrentEditStage->gridSize().height();
         int cols = m_pCurrentEditStage->gridSize().width() * m_pCurrentEditStage->boxSize().width();
 
+        m_modelSudoku->setRowCount(rows);
         m_modelSudoku->setColumnCount(cols);
         for (int i = 0; i < rows; i++) {
-            QList<QStandardItem*> list;
             for (int j = 0; j < cols; j++) {
-                QString str("");
-                int index = i * cols + j;
-                int number = m_pCurrentEditStage->numberAt(index);
-                if (number < 0)
+                QModelIndex index = m_modelSudoku->index(i,j);
+                int number = m_pCurrentEditStage->numberAt(i, j);
+                if (number <= 0)
                     continue;
 
-                if (number > 0)
-                    str.setNum(m_pCurrentEditStage->numberAt(index));
-                list.append(new QStandardItem(str));
+                m_modelSudoku->setData(index, number);
             }
-            m_modelSudoku->appendRow(list);
         }
-
     }
 }
 
-void MainWindow::on_m_tbSudokuBox_clicked(const QModelIndex &index)
-{
+void MainWindow::on_m_tbSudokuBox_clicked(const QModelIndex &index) {
+    if (!m_pCurrentEditStage)
+        return;
+
     int row = index.row();
     int col = index.column();
-    std::cout << row << "," << col << std::endl;
+
+    m_pCurrentEditStage->toggleSelected(row, col);
+    m_modelSudoku->setData(index, m_pCurrentEditStage->numberAt(row, col));
 }
 
 void MainWindow::on_m_spbRowsPerGrid_valueChanged(int value)
@@ -363,5 +375,6 @@ void MainWindow::on_m_btnGenerate_clicked()
     if (!m_pCurrentEditStage)
         return;
 
-
+    m_pCurrentEditStage->updateData();
+    refreshSudokuBox();
 }

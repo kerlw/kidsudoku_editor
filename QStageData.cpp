@@ -1,7 +1,11 @@
 #include "QStageData.h"
 #include <QDataStream>
 
+#include "SudokuUtil.h"
+
 static const int MAX_SIZE = 9 * 9;
+
+const unsigned short QStageData::SELECTED_MASK = (1 << 15);
 
 QStageData::QStageData()
 {
@@ -23,7 +27,6 @@ QStageData* QStageData::create(QSize gridSize, QSize boxSize) {
 
     ret->m_sizeGrid = gridSize;
     ret->m_sizeBox = boxSize;
-
     ret->m_iCellCount = gridSize.width() * gridSize.height() * boxSize.width() * boxSize.height();
 
     return ret;
@@ -47,11 +50,16 @@ QString QStageData::toQString() {
     return str;
 }
 
-int QStageData::numberAt(int index) {
+int QStageData::numberAt(int row, int col) {
+    int index = row * m_sizeBox.width() * m_sizeGrid.width() + col;
     if (index < 0 || index >= m_iCellCount)
         return -1;
 
-    return m_pNumbers[index];
+    int ret = m_pNumbers[index];
+    if (ret != 0 && m_setKnownCells.find(index) != m_setKnownCells.end())
+        ret |= SELECTED_MASK;
+
+    return ret;
 }
 
 void QStageData::resetRowsPerGrid(int value) {
@@ -75,23 +83,50 @@ void QStageData::resetGridsInCol(int value) {
 }
 
 void QStageData::resetGridSize(const QSize& size) {
-    //TODO move numbers to the new place
     m_sizeGrid = size;
     m_iCellCount = m_sizeGrid.width() * m_sizeGrid.height() * m_sizeBox.width() * m_sizeBox.height();
+    m_setKnownCells.clear();
+    memset(m_pNumbers, 0, sizeof(int) * m_iCellCount);
 }
 
 void QStageData::resetBoxSize(const QSize& size) {
-    //TODO move numbers to the new place
     m_sizeBox = size;
     m_iCellCount = m_sizeGrid.width() * m_sizeGrid.height() * m_sizeBox.width() * m_sizeBox.height();
+    m_setKnownCells.clear();
+    memset(m_pNumbers, 0, sizeof(int) * m_iCellCount);
 }
 
 int QStageData::lengthInByte() const {
     int ret = 4;    //id
     ret += 4;       //TODO speicified resources
     ret += 4;       //grid size & box size
+    ret += 2;       //count of cells
+    ret += m_iCellCount;    //number in each cell
     ret += 2;       //count of known cells
-    ret += 2 * m_setKnownCells.size();  //known cells position&number array
+    ret += m_setKnownCells.size();  //known cells position
+
+    return ret;
+}
+
+void QStageData::updateData() {
+    SudokuGenerator* generator = SudokuGenerator::getInstance();
+    generator->setSize(m_sizeGrid, m_sizeBox);
+    generator->generate();
+    unsigned char* puzzle = generator->getPuzzle();
+    for (int i = 0; i < m_iCellCount; i++) {
+        m_pNumbers[i] = puzzle[i];
+    }
+}
+
+void QStageData::toggleSelected(int row, int col) {
+    int index = row * m_sizeBox.width() * m_sizeGrid.width() + col;
+    if (index < 0 || index >= m_iCellCount)
+        return;
+
+    if (m_setKnownCells.find(index) != m_setKnownCells.end())
+        m_setKnownCells.erase(index);
+    else
+        m_setKnownCells.insert(index);
 }
 
 QDataStream& operator<<(QDataStream& stream, const QStageData& data) {
@@ -103,11 +138,17 @@ QDataStream& operator<<(QDataStream& stream, const QStageData& data) {
     stream << quint8(data.m_sizeBox.height());
     stream << quint8(data.m_sizeBox.width());
 
-    stream << quint16(data.m_setKnownCells.size());
+    //solution
+    stream << quint16(data.m_iCellCount);
+    for (int i = 0; i < data.m_iCellCount; i++) {
+        stream << quint8(data.m_pNumbers[i]);
+    }
 
+    //known cells
+    stream << quint16(data.m_setKnownCells.size());
     std::set<int>::const_iterator it = data.m_setKnownCells.begin();
     while (it != data.m_setKnownCells.end()) {
-        stream << quint8(*it) << quint8(data.m_pNumbers[*it]);
+        stream << quint8(*it);
         ++it;
     }
     return stream;
@@ -133,12 +174,18 @@ QDataStream& operator>>(QDataStream& stream, QStageData& data) {
     data.m_sizeBox.setWidth(i8);
 
     stream >> i16;
+    data.m_iCellCount = i16;
     int count = i16;
-
     memset(data.m_pNumbers, 0, sizeof(int)*MAX_SIZE);
     for (int i = 0; i < count; i++) {
+        stream >> reinterpret_cast<quint8&>(data.m_pNumbers[i]);
+    }
+
+    stream >> i16;
+    count = i16;
+    for (int i = 0; i < count; i++) {
         stream >> i8;
-        stream >> reinterpret_cast<quint8&>(data.m_pNumbers[i8]);
+        data.m_setKnownCells.insert(i8);
     }
 
     return stream;

@@ -7,6 +7,7 @@ class QCampaignData;
 class QStageData;
 
 class QStandardItemModel;
+class QSudokuBoxModel;
 
 namespace Ui {
 class MainWindow;
@@ -48,7 +49,7 @@ private:
     QStageData* m_pCurrentEditStage;
 
     QStandardItemModel* m_modelStages;
-    QStandardItemModel* m_modelSudoku;
+    QSudokuBoxModel* m_modelSudoku;
     QStandardItemModel* m_modelRes;
 
 private slots:

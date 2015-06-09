@@ -16,6 +16,9 @@ class QStageData : public QObject
     Q_PROPERTY(QSize BoxSize READ boxSize WRITE setBoxSize DESIGNABLE true USER true)
     Q_CLASSINFO("QStageData", "Stage Data")
 
+public:
+    static const unsigned short SELECTED_MASK;
+
 private:
     QStageData();
 
@@ -39,7 +42,7 @@ public:
 
     QString toQString();
 
-    int numberAt(int index);
+    int numberAt(int row, int col);
 
     void resetRowsPerGrid(int value);
     void resetColsPerGrid(int value);
@@ -50,8 +53,11 @@ public:
     void resetBoxSize(const QSize& size);
 
     int lengthInByte() const;
-//    void toBytes(byte** buff, int& len);
-//    void parseFromBytes(byte* buff, int len);
+
+    void updateData();
+
+    void toggleSelected(int row, int col);
+
 private:
     bool m_isSpecialRes;
     QString m_strPListFile;
