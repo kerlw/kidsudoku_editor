@@ -123,10 +123,29 @@ void QStageData::toggleSelected(int row, int col) {
     if (index < 0 || index >= m_iCellCount)
         return;
 
+    //if this cell has not been associated with a valid number, ignore
+    if (m_pNumbers[index] <= 0)
+        return;
+
     if (m_setKnownCells.find(index) != m_setKnownCells.end())
         m_setKnownCells.erase(index);
     else
         m_setKnownCells.insert(index);
+}
+
+void QStageData::initSolver(SudokuSolver *solver) {
+    if (!solver)
+        return;
+
+    int cols = m_sizeGrid.width() * m_sizeBox.width();
+    solver->setSize(m_sizeGrid, m_sizeBox);
+    std::set<int>::iterator it = m_setKnownCells.begin();
+    while (it != m_setKnownCells.end()) {
+        int row = (*it) / cols;
+        int col = (*it) % cols;
+        solver->setNumber(row, col, m_pNumbers[*it]);
+        ++it;
+    }
 }
 
 QDataStream& operator<<(QDataStream& stream, const QStageData& data) {

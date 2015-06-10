@@ -1,6 +1,5 @@
 #include "SudokuUtil.h"
 #include <string.h>
-#include <iostream>
 
 #define PRESET_BIT (1 << 15)
 #define COUNT(a) bcounts[(a & m_uMask)]
@@ -31,7 +30,8 @@ static const unsigned char bcounts[512] = {
 static const ushort bmasks[9] = { 0x01, 0x03, 0x07, 0x0f, 0x01f, 0x03f, 0x07f, 0x0ff, 0x01ff};
 
 SudokuSolver::SudokuSolver()
-    : m_uMask(0x1FF),
+    : m_iMaxSCount(1),
+      m_uMask(0x1FF),
       m_uNumbers(0) {
     memset(m_pSolution, 0, MAX_CELLS);
 }
@@ -47,8 +47,6 @@ SudokuSolver* SudokuSolver::getInstance() {
 }
 
 int SudokuSolver::search(int k, bool oneShot) {
-    std::cout << "searching for " << k << std::endl;
-    printBox();
     //check if search traversed each element.
     if (k >= m_uCols * m_uRows)
         return 1;
@@ -72,11 +70,9 @@ int SudokuSolver::search(int k, bool oneShot) {
         if (!supose(row, col, num))
             continue;
         scnt += search(k+1, oneShot);
-        if (oneShot && scnt > 0)
+        if ((oneShot && scnt > 0) || scnt > m_iMaxSCount)
             return scnt;
 
-        if (scnt > 0 && oneShot)
-            return scnt;
         resume(row, col, num);
     }
 
@@ -111,7 +107,6 @@ void SudokuSolver::initConstraints() {
 }
 
 bool SudokuSolver::supose(int row, int col, unsigned short number) {
-    std::cout << "supose row " << row << ", col " << col << " : " << number << std::endl;
     if (number <= 0 || number > m_uNumbers)
         return false;
 
@@ -128,13 +123,11 @@ bool SudokuSolver::supose(int row, int col, unsigned short number) {
     m_pRowConstraints[row] ^= mask;
     m_pColConstraints[col] ^= mask;
     m_pBlockConstraints[grid] ^= mask;
-    m_pCellConstraints[row * m_uCols + col] = mask;
     return true;
 
 }
 
 void SudokuSolver::resume(int row, int col, unsigned short number) {
-    std::cout << "resume row " << row << ", col " << col << " : " << number << std::endl;
     unsigned short mask = 1 << (number -1);
     int grid = (row / m_uGridRows) * m_uGridsInCol + col / m_uGridCols;
 
@@ -144,11 +137,11 @@ void SudokuSolver::resume(int row, int col, unsigned short number) {
     m_pRowConstraints[row] |= mask;
     m_pColConstraints[col] |= mask;
     m_pBlockConstraints[grid] |= mask;
-    m_pCellConstraints[row*m_uCols + col] = (m_pRowConstraints[row] & m_pColConstraints[col] & m_pBlockConstraints[grid]) & m_uMask;
 }
 
-void SudokuSolver::try_solve(bool oneShot) {
+int SudokuSolver::try_solve(bool oneShot) {
     m_iSolutionCount = search(0, oneShot);
+    return m_iSolutionCount;
 }
 
 void SudokuSolver::setNumber(int row, int col, int value) {
@@ -168,15 +161,14 @@ void SudokuSolver::unsetNumber(int row, int col) {
     m_pCellConstraints[row*m_uCols + col] = m_uMask;
 }
 
-void SudokuSolver::printBox() {
-    for (int i = 0; i < m_uCols * m_uRows; i++) {
-        if (i % m_uCols == 0)
-            std::cout << std::endl;
-        std::cout << int(m_pSolution[i]) << " ";
-    }
-    std::cout << std::endl;
-}
-
+//void SudokuSolver::printBox() {
+//    for (int i = 0; i < m_uCols * m_uRows; i++) {
+//        if (i % m_uCols == 0)
+//            std::cout << std::endl;
+//        std::cout << int(m_pSolution[i]) << " ";
+//    }
+//    std::cout << std::endl;
+//}
 
 SudokuGenerator* SudokuGenerator::getInstance() {
     if (!s_pGenerator) {

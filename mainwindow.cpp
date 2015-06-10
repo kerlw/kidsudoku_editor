@@ -34,6 +34,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_modelRes = new QStandardItemModel(this);
     ui->m_lvResources->setModel(m_modelRes);
+
+    //set the solver's max search depth
+    SudokuSolver::getInstance()->setMaxSolutionCount(4);
 }
 
 MainWindow::~MainWindow()
@@ -101,6 +104,8 @@ void MainWindow::on_m_lvStages_clicked(const QModelIndex &index)
         ui->m_spbRowsPerGrid->setValue(data->gridSize().height());
         ui->m_spbGridsInCol->setValue(data->boxSize().width());
         ui->m_spbGridsInRow->setValue(data->boxSize().height());
+
+        data->initSolver(SudokuSolver::getInstance());
     } else {
         ui->m_grpStage->setEnabled(false);
     }
@@ -126,6 +131,7 @@ void MainWindow::refreshSelectedStageDescInList() {
 
 void MainWindow::refreshSudokuBox() {
     m_modelSudoku->clear();
+    refreshSudokuLabel();
     if (m_pCurrentEditStage) {
         int rows = m_pCurrentEditStage->boxSize().height() * m_pCurrentEditStage->gridSize().height();
         int cols = m_pCurrentEditStage->gridSize().width() * m_pCurrentEditStage->boxSize().width();
@@ -145,6 +151,26 @@ void MainWindow::refreshSudokuBox() {
     }
 }
 
+void MainWindow::refreshSudokuLabel() {
+    if (!m_pCurrentEditStage) {
+        ui->m_lbSolves->setText("");
+        return;
+    }
+
+    SudokuSolver *solver = SudokuSolver::getInstance();
+    m_pCurrentEditStage->initSolver(solver);
+    int scnt = solver->try_solve(false);
+    if (scnt == 0) {
+        ui->m_lbSolves->setText(tr("Current puzzle has no solution"));
+    } else if (scnt == 1) {
+        ui->m_lbSolves->setText(tr("Current puzzle has only one solution"));
+    } else if (scnt <= 3) {
+        ui->m_lbSolves->setText(tr("Current puzzle has ") + QString::number(scnt) + tr("solutions"));
+    } else {
+        ui->m_lbSolves->setText(tr("Current puzzle has too much solutions"));
+    }
+}
+
 void MainWindow::on_m_tbSudokuBox_clicked(const QModelIndex &index) {
     if (!m_pCurrentEditStage)
         return;
@@ -153,7 +179,19 @@ void MainWindow::on_m_tbSudokuBox_clicked(const QModelIndex &index) {
     int col = index.column();
 
     m_pCurrentEditStage->toggleSelected(row, col);
-    m_modelSudoku->setData(index, m_pCurrentEditStage->numberAt(row, col));
+
+    int value = m_pCurrentEditStage->numberAt(row, col);
+    m_modelSudoku->setData(index, value);
+
+    if ((value & 0x7fff) <= 0)
+        return;
+
+    if ((value & QStageData::SELECTED_MASK) == 0) {
+        SudokuSolver::getInstance()->unsetNumber(row, col);
+    } else {
+        SudokuSolver::getInstance()->setNumber(row, col, (value & 0x7fff));
+    }
+    refreshSudokuLabel();
 }
 
 void MainWindow::on_m_spbRowsPerGrid_valueChanged(int value)
@@ -282,11 +320,12 @@ void MainWindow::on_actionDuplicate_selected_stage_triggered()
     if (!m_pCurrentEditStage)
         return;
 
+    QModelIndex index = ui->m_lvStages->currentIndex();
     QStageData* data = QStageData::create(m_pCurrentEditStage);
-    m_pCampaign->addStageData(data);
+    m_pCampaign->addStageData(data, index.row());
 
     QStandardItem* item = new QStandardItem(data->toQString());
-    ((QStandardItemModel*)ui->m_lvStages->model())->appendRow(item);
+    m_modelStages->insertRow(index.row() + 1, item);
 }
 
 MainWindow::ExecuteResult MainWindow::confirmSaveChanges() {
@@ -370,11 +409,17 @@ MainWindow::ExecuteResult MainWindow::saveToFile(const QString &path) {
     return MainWindow::DONE;
 }
 
-void MainWindow::on_m_btnGenerate_clicked()
-{
+void MainWindow::on_m_btnGenerate_clicked() {
     if (!m_pCurrentEditStage)
         return;
 
+    if (!m_pCurrentEditStage->isSizeValid()) {
+        QMessageBox::information(this, tr("Invalid size"), tr("The Sudoku Box size is invalid."));
+        return;
+    }
+
     m_pCurrentEditStage->updateData();
+    m_pCurrentEditStage->initSolver(SudokuSolver::getInstance());
+
     refreshSudokuBox();
 }

@@ -26,6 +26,7 @@ private:
     void refreshView();
     void refreshSelectedStageDescInList();
     void refreshSudokuBox();
+    void refreshSudokuLabel();
 
     enum ExecuteResult{
         DONE = 0,

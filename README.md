@@ -57,8 +57,10 @@ I choose the first one at now, because this one make it possible to change art r
 |cols_per_grid|uint8|1
 |grids_in_row|uint8|1
 |grids_in_col|uint8|1
+|cells_count|uint16|
+|cell_number|array||uint8 array, length indicated by cells_count, this field is the complete solution of the puzzle
 |known_cells_count|uint16|2|count of cells that has initialized with a number in this puzzle.
-|know_cells|array|dynamic|uint_16 array, each value is made up by two parts: low 8-bit indicates position of this cell and high 8-bit indicate its number value.
+|know_cells|array|dynamic|uint8 array, each value indicates position of this cell
 
 
 

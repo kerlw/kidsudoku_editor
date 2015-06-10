@@ -96,7 +96,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="m_tvSolves">
+           <widget class="QLabel" name="m_lbSolves">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -105,6 +105,12 @@
             </property>
             <property name="text">
              <string/>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
             </property>
            </widget>
           </item>

@@ -6,6 +6,8 @@
 #include <QSize>
 #include <set>
 
+class SudokuSolver;
+
 class QStageData : public QObject
 {
     Q_OBJECT
@@ -57,6 +59,13 @@ public:
     void updateData();
 
     void toggleSelected(int row, int col);
+
+    bool isSizeValid() {
+        return m_sizeBox.width() <= m_sizeGrid.height() &&
+                m_sizeBox.height() <= m_sizeGrid.width();
+    }
+
+    void initSolver(SudokuSolver* solver);
 
 private:
     bool m_isSpecialRes;

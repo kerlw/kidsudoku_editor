@@ -18,17 +18,27 @@ public:
 
     void setSize(QSize grid, QSize box);
 
-    bool supose(int row, int col, unsigned short number);
-    void resume(int row, int col, unsigned short number);
+    void setNumber(int r, int c, int value);
+    void unsetNumber(int row, int col);
+
+    void setMaxSolutionCount(int value) {
+        m_iMaxSCount = value;
+    }
+    int getSolutionCount() {
+        return m_iSolutionCount;
+    }
+
+    int try_solve(bool oneShot = true);
 
 private:
     SudokuSolver();
 
     void initConstraints();
     int search(int k, bool oneShot = true);
-    void try_solve(bool oneShot = true);
-    void setNumber(int r, int c, int value);
-    void unsetNumber(int row, int col);
+
+
+    bool supose(int row, int col, unsigned short number);
+    void resume(int row, int col, unsigned short number);
 
     unsigned short getValue(unsigned short constraint, int index) {
         for (int i = 0; i < m_uNumbers; i++) {
@@ -39,9 +49,11 @@ private:
         return 0;
     }
 
-    void printBox();
+    void printBox(){};
 
 private:
+    int m_iMaxSCount;
+
     unsigned short m_uMask;
 
     unsigned short m_uNumbers;
