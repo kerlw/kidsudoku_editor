@@ -161,13 +161,13 @@ void MainWindow::refreshSudokuLabel() {
     m_pCurrentEditStage->initSolver(solver);
     int scnt = solver->try_solve(false);
     if (scnt == 0) {
-        ui->m_lbSolves->setText(tr("Current puzzle has no solution"));
+        ui->m_lbSolves->setText(tr("This puzzle has no solution"));
     } else if (scnt == 1) {
-        ui->m_lbSolves->setText(tr("Current puzzle has only one solution"));
+        ui->m_lbSolves->setText(tr("This puzzle has only 1 solution"));
     } else if (scnt <= 3) {
-        ui->m_lbSolves->setText(tr("Current puzzle has ") + QString::number(scnt) + tr("solutions"));
+        ui->m_lbSolves->setText(tr("This puzzle has ") + QString::number(scnt) + tr(" solutions"));
     } else {
-        ui->m_lbSolves->setText(tr("Current puzzle has too much solutions"));
+        ui->m_lbSolves->setText(tr("This puzzle has too much solutions"));
     }
 }
 
@@ -253,7 +253,9 @@ void MainWindow::on_action_Open_triggered()
         QMessageBox::information(this, "Failed", "Open file failed!");
         return;
     }
+
     QDataStream stream(&file);
+    stream.setByteOrder(QDataStream::LittleEndian);
 
     //read campaign data from file.
     if (!m_pCampaign)
@@ -301,7 +303,22 @@ void MainWindow::on_actionMove_dow_n_stage_triggered()
 
 void MainWindow::on_actionDel_stage_triggered()
 {
+    QModelIndex index = ui->m_lvStages->currentIndex();
+    if (!index.isValid())
+        return;
 
+    //keep the stage list has at least one element.
+    if (m_modelStages->rowCount() <= 1)
+        return;
+
+    m_pCampaign->removeStageDataAt(index.row());
+    m_modelStages->removeRow(index.row());
+
+    if (index.row() >= m_modelStages->rowCount()) {
+        ui->m_lvStages->clicked(m_modelStages->index(index.row() - 1, 0));
+    } else {
+        ui->m_lvStages->clicked(index);
+    }
 }
 
 void MainWindow::on_actionAdd_resource_triggered()
@@ -321,11 +338,14 @@ void MainWindow::on_actionDuplicate_selected_stage_triggered()
         return;
 
     QModelIndex index = ui->m_lvStages->currentIndex();
+    if (!index.isValid())
+        return;
+
     QStageData* data = QStageData::create(m_pCurrentEditStage);
     m_pCampaign->addStageData(data, index.row());
 
     QStandardItem* item = new QStandardItem(data->toQString());
-    m_modelStages->insertRow(index.row() + 1, item);
+    m_modelStages->insertRow(index.row(), item);
 }
 
 MainWindow::ExecuteResult MainWindow::confirmSaveChanges() {
@@ -399,6 +419,7 @@ MainWindow::ExecuteResult MainWindow::saveToFile(const QString &path) {
     }
 
     QDataStream stream(&file);
+    stream.setByteOrder(QDataStream::LittleEndian);
     stream << *m_pCampaign;
     file.flush();
     file.close();

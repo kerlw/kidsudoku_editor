@@ -74,7 +74,7 @@ int QCampaignData::lengthInByte() const {
         len += 4 + (*it)->lengthInByte();
         ++it;
     }
-    return 0;
+    return len;
 }
 
 QDataStream& operator<<(QDataStream& stream, const QCampaignData& data) {

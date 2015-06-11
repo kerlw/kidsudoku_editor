@@ -40,6 +40,7 @@ QStageData* QStageData::create(QStageData *src) {
     ret->m_iCellCount = src->m_iCellCount;
     Q_ASSERT(ret->m_iCellCount <= MAX_SIZE);
     memcpy(ret->m_pNumbers, src->m_pNumbers, sizeof(int)*ret->m_iCellCount);
+    ret->m_setKnownCells.insert(src->m_setKnownCells.begin(), src->m_setKnownCells.end());
 
     return ret;
 }
