@@ -11,6 +11,12 @@ public:
     virtual ~QSudokuBoxModel();
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+
+    void setSize(const QSize& grid, const QSize& box);
+
+protected:
+    QSize m_sizeGrid;
+    QSize m_sizeBox;
 };
 
 #endif // __QSUDOKUBOXMODEL_H__

@@ -133,11 +133,13 @@ void MainWindow::refreshSudokuBox() {
     m_modelSudoku->clear();
     refreshSudokuLabel();
     if (m_pCurrentEditStage) {
-        int rows = m_pCurrentEditStage->boxSize().height() * m_pCurrentEditStage->gridSize().height();
-        int cols = m_pCurrentEditStage->gridSize().width() * m_pCurrentEditStage->boxSize().width();
+        QSize grid = m_pCurrentEditStage->gridSize();
+        QSize box = m_pCurrentEditStage->boxSize();
 
-        m_modelSudoku->setRowCount(rows);
-        m_modelSudoku->setColumnCount(cols);
+        m_modelSudoku->setSize(grid, box);
+
+        int rows = grid.height() * box.height();
+        int cols = grid.width() * box.width();
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 QModelIndex index = m_modelSudoku->index(i,j);

@@ -1,6 +1,9 @@
 #include "QSudokuBoxModel.h"
 #include "QStageData.h"
 
+static const QColor SELECTED_COLOR[2] = { QColor(255, 255, 0), QColor(0xac, 0xac, 0) };
+static const QColor UNSELECTED_COLOR[2] = { QColor(255, 255, 255), QColor(0xac, 0xac, 0xac) };
+
 QSudokuBoxModel::QSudokuBoxModel(QObject* parent)
     : QStandardItemModel(parent) {
 
@@ -25,10 +28,22 @@ QVariant QSudokuBoxModel::data(const QModelIndex &index, int role) const {
     case Qt::BackgroundColorRole:
     {
         int value = QStandardItemModel::data(index, Qt::EditRole).value<int>();
+        int offset = ((index.row() / m_sizeGrid.height() % 2) + index.column() / m_sizeGrid.width()) % 2;
         return (value & QStageData::SELECTED_MASK) != 0 ?
-                    QColor(255, 255, 0) : QColor(255,255,255);
+                    SELECTED_COLOR[offset] : UNSELECTED_COLOR[offset];
     }
     default:
         return QStandardItemModel::data(index, role);
     }
+}
+
+void QSudokuBoxModel::setSize(const QSize& grid, const QSize& box) {
+    m_sizeGrid = grid;
+    m_sizeBox = box;
+
+    int rows = grid.height() * box.height();
+    int cols = grid.width() * box.width();
+    this->setRowCount(rows);
+    this->setColumnCount(cols);
+
 }
