@@ -85,7 +85,7 @@ void MainWindow::onCampaignDataLoaded() {
     //set current selection at row 0
     QModelIndex mindex = m_modelStages->index(0, 0);
     ui->m_lvStages->setCurrentIndex(mindex);
-    ui->m_lvStages->clicked(mindex);
+    emit ui->m_lvStages->clicked(mindex);
 }
 
 void MainWindow::on_m_lvStages_clicked(const QModelIndex &index)
@@ -291,14 +291,30 @@ void MainWindow::on_action_Add_a_stage_triggered()
     ((QStandardItemModel*)ui->m_lvStages->model())->appendRow(item);
 }
 
-void MainWindow::on_actionMove_up_stage_triggered()
-{
+void MainWindow::on_actionMove_up_stage_triggered() {
+    QModelIndex index = ui->m_lvStages->currentIndex();
+    if (!index.isValid() || index.row() <= 0)
+        return;
 
+    int row = index.row();
+    m_pCampaign->swap(row, row - 1);
+    QStandardItem* item = m_modelStages->takeItem(row);
+    m_modelStages->removeRow(row);
+    m_modelStages->insertRow(row - 1, item);
+    ui->m_lvStages->setCurrentIndex(m_modelStages->index(row - 1, 0));
 }
 
-void MainWindow::on_actionMove_dow_n_stage_triggered()
-{
+void MainWindow::on_actionMove_dow_n_stage_triggered() {
+    QModelIndex index = ui->m_lvStages->currentIndex();
+    if (!index.isValid() || index.row() >= m_modelStages->rowCount() - 1)
+        return;
 
+    int row = index.row();
+    m_pCampaign->swap(row, row + 1);
+    QStandardItem* item = m_modelStages->takeItem(row);
+    m_modelStages->removeRow(row);
+    m_modelStages->insertRow(row + 1, item);
+    ui->m_lvStages->setCurrentIndex(m_modelStages->index(row + 1, 0));
 }
 
 void MainWindow::on_actionDel_stage_triggered()
@@ -315,20 +331,22 @@ void MainWindow::on_actionDel_stage_triggered()
     m_modelStages->removeRow(index.row());
 
     if (index.row() >= m_modelStages->rowCount()) {
-        ui->m_lvStages->clicked(m_modelStages->index(index.row() - 1, 0));
+        emit ui->m_lvStages->clicked(m_modelStages->index(index.row() - 1, 0));
     } else {
-        ui->m_lvStages->clicked(index);
+        emit ui->m_lvStages->clicked(index);
     }
 }
 
-void MainWindow::on_actionAdd_resource_triggered()
-{
+void MainWindow::on_actionAdd_resource_triggered() {
     if (!m_pCampaign)
         return;
 }
 
-void MainWindow::on_actionDel_resource_triggered()
-{
+void MainWindow::on_actionDel_resource_triggered() {
+    QModelIndex index = ui->m_lvResources->currentIndex();
+    if (!index.isValid())
+        return;
+
 
 }
 

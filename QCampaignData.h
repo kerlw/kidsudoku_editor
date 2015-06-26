@@ -30,6 +30,8 @@ public:
     void setSavePath(const QString& path) { m_strPath = path; }
 
     int lengthInByte() const;
+
+    void swap(int src, int dst);
 signals:
 
 public slots:

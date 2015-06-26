@@ -77,6 +77,13 @@ int QCampaignData::lengthInByte() const {
     return len;
 }
 
+void QCampaignData::swap(int src, int dst) {
+    if (src < 0 || src > m_vctData.size() || dst < 0 || dst > m_vctData.size())
+        return;
+
+    std::iter_swap(m_vctData.begin() + src, m_vctData.begin() + dst);
+}
+
 QDataStream& operator<<(QDataStream& stream, const QCampaignData& data) {
     int len = 0;        // used to calculate the start offset of stage data.
 
