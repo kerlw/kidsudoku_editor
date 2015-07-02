@@ -245,7 +245,7 @@
            <property name="bottomMargin">
             <number>10</number>
            </property>
-           <item alignment="Qt::AlignLeft|Qt::AlignTop">
+           <item>
             <widget class="QGroupBox" name="m_grpCampaignRes">
              <property name="title">
               <string>Specify Resource Files</string>
@@ -270,52 +270,7 @@
                <number>10</number>
               </property>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_3">
-                <item>
-                 <widget class="QLineEdit" name="m_etCampaignPList">
-                  <property name="enabled">
-                   <bool>false</bool>
-                  </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="m_btnCampaignPList">
-                  <property name="text">
-                   <string>plist...</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_4">
-                <item>
-                 <widget class="QLineEdit" name="m_etCampaignPng">
-                  <property name="enabled">
-                   <bool>false</bool>
-                  </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="m_btnCampaignPng">
-                  <property name="text">
-                   <string>png...</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
+               <widget class="QComboBox" name="m_cmbCampaignRes"/>
               </item>
              </layout>
             </widget>
@@ -372,52 +327,7 @@
                <number>10</number>
               </property>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout">
-                <item>
-                 <widget class="QLineEdit" name="lineEdit">
-                  <property name="enabled">
-                   <bool>false</bool>
-                  </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pushButton">
-                  <property name="text">
-                   <string>plist...</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_2">
-                <item>
-                 <widget class="QLineEdit" name="lineEdit_2">
-                  <property name="enabled">
-                   <bool>false</bool>
-                  </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pushButton_2">
-                  <property name="text">
-                   <string>png...</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
+               <widget class="QComboBox" name="m_cmbStageRes"/>
               </item>
              </layout>
             </widget>
@@ -690,6 +600,11 @@
    </property>
    <property name="text">
     <string>Duplicate selected stage</string>
+   </property>
+  </action>
+  <action name="actionApply_stages_resource_to_entire_campaign">
+   <property name="text">
+    <string>Apply stages resource to entire campaign</string>
    </property>
   </action>
  </widget>

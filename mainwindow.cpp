@@ -11,6 +11,7 @@
 #include "QCampaignData.h"
 #include "QSudokuBoxModel.h"
 #include "SudokuUtil.h"
+#include "ResourceData.h"
 
 static const QString FILE_FILTER = "KidSudoku Packed Campaign Files(*.pcd)";
 static const QString EXTENSION_NAME = ".pcd";      //file extension name, pcd = Packed Campaign Data
@@ -35,6 +36,20 @@ MainWindow::MainWindow(QWidget *parent) :
     m_modelRes = new QStandardItemModel(this);
     ui->m_lvResources->setModel(m_modelRes);
 
+    ui->m_cmbCampaignRes->setModel(m_modelRes);
+    ui->m_cmbStageRes->setModel(m_modelRes);
+
+    ResourceDataManager* mgr = ResourceDataManager::getInstance();
+    int count = mgr->size();
+    for (int i = 0; i < count; i++) {
+        ResourceData* data = (*mgr)[i];
+        if (!data)
+            continue;
+
+        m_modelRes->appendRow(new QStandardItem(data->toString()));
+    }
+
+
     //set the solver's max search depth
     SudokuSolver::getInstance()->setMaxSolutionCount(4);
 }
@@ -55,7 +70,6 @@ void MainWindow::on_action_New_triggered()
 
     //clear old data
     m_modelStages->clear();
-    m_modelRes->clear();
     m_modelSudoku->clear();
     m_bChanged = false;
 
