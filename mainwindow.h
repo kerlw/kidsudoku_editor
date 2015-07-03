@@ -73,6 +73,8 @@ private slots:
     void on_actionDel_resource_triggered();
     void on_actionDuplicate_selected_stage_triggered();
     void on_m_btnGenerate_clicked();
+    void on_m_cmbCampaignRes_currentIndexChanged(int index);
+    void on_m_cmbStageRes_currentIndexChanged(int index);
 };
 
 #endif // MAINWINDOW_H

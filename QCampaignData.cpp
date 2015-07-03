@@ -84,6 +84,14 @@ void QCampaignData::swap(int src, int dst) {
     std::iter_swap(m_vctData.begin() + src, m_vctData.begin() + dst);
 }
 
+void QCampaignData::setResource(QString &res) {
+    m_strRes = res;
+}
+
+QString QCampaignData::getResource() {
+    return m_strRes;
+}
+
 QDataStream& operator<<(QDataStream& stream, const QCampaignData& data) {
     int len = 0;        // used to calculate the start offset of stage data.
 

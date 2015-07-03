@@ -478,3 +478,15 @@ void MainWindow::on_m_btnGenerate_clicked() {
 
     refreshSudokuBox();
 }
+
+void MainWindow::on_m_cmbCampaignRes_currentIndexChanged(int index) {
+    if (m_pCampaign) {
+        ResourceData* data = (*ResourceDataManager::getInstance())[index];
+        if (data)
+            m_pCampaign->setResource((data->isInternal ? "i:" : "u:") + data->name); //this is not a good idea
+    }
+}
+
+void MainWindow::on_m_cmbStageRes_currentIndexChanged(int index) {
+
+}

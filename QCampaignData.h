@@ -32,6 +32,9 @@ public:
     int lengthInByte() const;
 
     void swap(int src, int dst);
+
+    void setResource(QString& res);
+    QString getResource();
 signals:
 
 public slots:
@@ -39,6 +42,7 @@ public slots:
 private:
     std::vector<QStageData*> m_vctData;
     QString m_strPath;
+    QString m_strRes;
 
     friend QDataStream& operator<<(QDataStream& stream, const QCampaignData& data);
 };
